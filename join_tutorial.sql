@@ -84,31 +84,62 @@ where game.stadium='National Stadium, Warsaw';
 /*
 8.
 The example query shows all goals scored in the Germany-Greece quarterfinal.
+
+SELECT player, gtime
+  FROM game JOIN goal ON matchid = id 
+    WHERE (team1='GER' AND team2='GRE')
+    
+    
 Instead show the name of all players who scored a goal against Germany.
 
 HINT
+Select goals scored only by non-German players in matches where GER was the id of either team1 or team2.
+
+You can use teamid!='GER' to prevent listing German players.
+
+You can use DISTINCT to stop players being listed twice.
 */
+SELECT distinct player
+  FROM game JOIN goal ON matchid = id 
+    WHERE (team1='GER' or team2='GER') and teamid != 'GER';
 
 /*
 9.
 Show teamname and the total number of goals scored.
 COUNT and GROUP BY
 */
-
+SELECT teamname, count(*) as total_goals
+  FROM eteam JOIN goal ON id=teamid
+ GROUP BY teamname
+ 
 /*
 10.
 Show the stadium and the number of goals scored in each stadium.
 */
+select stadium, count(*) as num_goals
+from game
+join goal
+on game.id = goal.matchid
+group by stadium;
 
 /*
 11.
 For every match involving 'POL', show the matchid, date and the number of goals scored.
 */
+select matchid, mdate, count(*) as goals_scored
+from game join goal on game.id = goal.matchid
+WHERE (team1 = 'POL' OR team2 = 'POL')
+group by matchid, mdate
+
 
 /*
 12.
 For every match where 'GER' scored, show matchid, match date and the number of goals scored by 'GER'
 */
+select matchid, mdate, count(*)
+from game join goal on game.id = goal.matchid
+where teamid='GER'
+group by matchid, mdate;
 
 /*
 13.
@@ -120,4 +151,12 @@ mdate	team1	score1	team2	score2
 ...
 Notice in the query given every goal is listed. If it was a team1 goal then a 1 appears in score1, otherwise there is a 0. You could SUM this column to get a count of the goals scored by team1. Sort your result by mdate, matchid, team1 and team2.
 */
+SELECT mdate,
+  team1,
+  sum(CASE WHEN teamid=team1 THEN 1 ELSE 0 END) score1,
+  team2,
+  sum(case when teamid=team2 then 1 else 0 end)score2
+  FROM game left JOIN goal ON matchid = id
+  group by mdate, team1, team2
+  order by mdate, matchid, team1, team2
 
