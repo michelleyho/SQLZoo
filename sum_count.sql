@@ -1,4 +1,5 @@
 /* https://sqlzoo.net/wiki/SUM_and_COUNT */
+/*The HAVING clause allows use to filter the groups which are displayed. The WHERE clause filters rows before the aggregation, the HAVING clause filters after the aggregation. */
 /* world(name, continent, area, population, gdp) */
 
 /*
